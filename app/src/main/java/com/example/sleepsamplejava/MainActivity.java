@@ -1,14 +1,5 @@
 package com.example.sleepsamplejava;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.viewbinding.BuildConfig;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -16,11 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewbinding.BuildConfig;
 
 import com.example.sleepsamplejava.databinding.ActivityMainBinding;
 import com.google.android.gms.location.ActivityRecognition;
@@ -29,18 +26,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private MainViewModel mainViewModel;
     private boolean subscribedToSleepData = false;
     private PendingIntent sleepPendingIntent;
-    private String sleepSegmentOutput;
-    private String sleepClassifyOutput;
+    private String sleepSegmentOutput = "";
+    private String sleepClassifyOutput = "";
 
     public void setSubscribedToSleepData(boolean newSubscribedToSleepData){
         if(newSubscribedToSleepData){
@@ -60,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.initViewModel();
         startObserver();
-        sleepPendingIntent = SleepReceiver.createSleepReceiverPendingIntent(getApplicationContext());
+        sleepPendingIntent = SleepReceiver.createSleepReceiverPendingIntent(getApplicationContext(), mainViewModel);
     }
 
     private void startObserver() {
@@ -70,19 +62,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mainViewModel.allSleepSegments.observe(this, sleepSegmentEventEntities ->{
-            if(!sleepSegmentEventEntities.isEmpty()){
-                //sleepSegmentOutput = sleepSegmentEventEntities.j
-                Log.d("donny", String.valueOf(sleepSegmentEventEntities.size()));
+            if(sleepSegmentEventEntities!=null){
+                Log.d("donny", "segment: "+String.valueOf(sleepSegmentEventEntities.size()));
+                for(int i = 0 ; i < sleepSegmentEventEntities.size() ; i++){
+                    Log.d("donny", String.valueOf(sleepSegmentEventEntities.get(i).startTimeMillis));
+                }
                 sleepSegmentOutput = String.join(" "+ sleepSegmentEventEntities);
             }
             updateOutput();
         });
         mainViewModel.allSleepClassifyEventEntities.observe(this, sleepClassifyEventEntities ->{
-            if(!sleepClassifyEventEntities.isEmpty()){
-                //
-                //sleep
-                sleepClassifyOutput = String.join(" "+ sleepClassifyEventEntities);
-
+            if(sleepClassifyEventEntities!=null){
+                Log.d("donny","classify: "+ String.valueOf(sleepClassifyEventEntities.size()));
+                for(int i = 0 ; i < sleepClassifyEventEntities.size() ; i++){
+                    Log.d("donny", String.valueOf(sleepClassifyEventEntities.get(i).timestampSeconds));
+                    sleepClassifyOutput = String.valueOf(sleepClassifyEventEntities.get(i).timestampSeconds);
+                }
+//                sleepClassifyOutput = String.join(" "+ sleepClassifyEventEntities);
             }
             updateOutput();
         });
@@ -98,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         }
         String sleepData = getString(R.string.main_output_header2_and_sleep_data, sleepSegmentOutput, sleepClassifyOutput);
         String newOutput = header + sleepData;
+        Log.d("donny", "updateOutput: "+newOutput);
         binding.outputTextView.setText(newOutput);
     }
 

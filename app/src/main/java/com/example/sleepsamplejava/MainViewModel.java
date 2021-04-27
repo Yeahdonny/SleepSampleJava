@@ -1,11 +1,7 @@
 package com.example.sleepsamplejava;
 
-import android.os.AsyncTask;
-
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +23,17 @@ public class MainViewModel extends ViewModel {
         sleepClassifyEventEntityList = new ArrayList<>();
         sleepSegmentEventEntityList = new ArrayList<>();
     }
-    void addSleepClassify(SleepClassifyEventEntity sleepClassifyEventEntity){
-        sleepClassifyEventEntityList.add(sleepClassifyEventEntity);
-        allSleepClassifyEventEntities.setValue(sleepClassifyEventEntityList);
+    void addSleepClassify(ArrayList<SleepClassifyEventEntity> sleepClassifyEventEntity){
+        for(int i = 0 ; i < sleepClassifyEventEntity.size() ;i++){
+            sleepClassifyEventEntityList.add(sleepClassifyEventEntity.get(i));
+        }
+        allSleepClassifyEventEntities.postValue(sleepClassifyEventEntityList);
     }
-    void addSleepSegment(SleepSegmentEventEntity sleepSegmentEventEntity){
-        sleepSegmentEventEntityList.add(sleepSegmentEventEntity);
-        allSleepSegments.setValue(sleepSegmentEventEntityList);
+    void addSleepSegment(ArrayList<SleepSegmentEventEntity> sleepSegmentEventEntity){
+        for(int i = 0 ; i < sleepSegmentEventEntity.size() ; i++){
+            sleepSegmentEventEntityList.add(sleepSegmentEventEntity.get(i));
+        }
+        allSleepSegments.postValue(sleepSegmentEventEntityList);
     }
 
 }

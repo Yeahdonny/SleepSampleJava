@@ -8,11 +8,14 @@ import android.content.Intent;
 import com.google.android.gms.location.SleepClassifyEvent;
 import com.google.android.gms.location.SleepSegmentEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SleepReceiver extends BroadcastReceiver {
-    public static PendingIntent createSleepReceiverPendingIntent(Context context) {
+    static MainViewModel viewModel;
+    public static PendingIntent createSleepReceiverPendingIntent(Context context, MainViewModel mainViewModel) {
         Intent sleepIntent = new Intent(context, SleepReceiver.class);
+        viewModel = mainViewModel;
         return PendingIntent.getBroadcast(context, 0, sleepIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
@@ -30,23 +33,23 @@ public class SleepReceiver extends BroadcastReceiver {
     }
 
     private void addSleepClassifyEventsToArray(List<SleepClassifyEvent> sleepClassifyEvents) {
-        if(!sleepClassifyEvents.isEmpty()){
-            List<SleepClassifyEventEntity> slist = null;
+        if(sleepClassifyEvents!=null){
+            ArrayList<SleepClassifyEventEntity> clist = new ArrayList<>();
             for(int i = 0 ; i < sleepClassifyEvents.size() ; i++){
                 SleepClassifyEventEntity entity = new SleepClassifyEventEntity();
                 entity.confidence = sleepClassifyEvents.get(i).getConfidence();
                 entity.light = sleepClassifyEvents.get(i).getLight();
                 entity.motion = sleepClassifyEvents.get(i).getMotion();
                 entity.timestampSeconds = (int)sleepClassifyEvents.get(i).getTimestampMillis();
-                slist.add(entity);
+                clist.add(entity);
             }
-
+            viewModel.addSleepClassify(clist); //broadcast에서 viewmodel 접근해도 될까..
         }
     }
 
     private void addSleepSegmentEventsToArray(List<SleepSegmentEvent> sleepSegmentEvents) {
-        if(!sleepSegmentEvents.isEmpty()){
-            List<SleepSegmentEventEntity> slist = null;
+        if(sleepSegmentEvents!=null){
+            ArrayList<SleepSegmentEventEntity> slist = new ArrayList<>();
             for(int i = 0 ; i < sleepSegmentEvents.size() ; i++){
                 SleepSegmentEventEntity entity = new SleepSegmentEventEntity();
                 entity.startTimeMillis = sleepSegmentEvents.get(i).getStartTimeMillis();
@@ -54,6 +57,7 @@ public class SleepReceiver extends BroadcastReceiver {
                 entity.status = sleepSegmentEvents.get(i).getStatus();
                 slist.add(entity);
             }
+            viewModel.addSleepSegment(slist);
         }
     }
 
