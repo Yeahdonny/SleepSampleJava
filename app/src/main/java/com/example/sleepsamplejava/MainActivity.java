@@ -64,21 +64,27 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.allSleepSegments.observe(this, sleepSegmentEventEntities ->{
             if(sleepSegmentEventEntities!=null){
                 Log.d("donny", "segment: "+String.valueOf(sleepSegmentEventEntities.size()));
+                sleepSegmentOutput="";
                 for(int i = 0 ; i < sleepSegmentEventEntities.size() ; i++){
                     Log.d("donny", String.valueOf(sleepSegmentEventEntities.get(i).startTimeMillis));
+                    sleepSegmentOutput += "start: "+sleepSegmentEventEntities.get(i).getStartTimeMillis() +
+                            " end: " +sleepSegmentEventEntities.get(i).getEndTimeMillis() +
+                            " status: " +sleepSegmentEventEntities.get(i).getStatus()+"\n";
                 }
-                sleepSegmentOutput = String.join(" "+ sleepSegmentEventEntities);
             }
             updateOutput();
         });
         mainViewModel.allSleepClassifyEventEntities.observe(this, sleepClassifyEventEntities ->{
             if(sleepClassifyEventEntities!=null){
+                sleepClassifyOutput="";
                 Log.d("donny","classify: "+ String.valueOf(sleepClassifyEventEntities.size()));
                 for(int i = 0 ; i < sleepClassifyEventEntities.size() ; i++){
                     Log.d("donny", String.valueOf(sleepClassifyEventEntities.get(i).timestampSeconds));
-                    sleepClassifyOutput = String.valueOf(sleepClassifyEventEntities.get(i).timestampSeconds);
+                    sleepClassifyOutput += "confidence: "+ sleepClassifyEventEntities.get(i).getConfidence() +
+                            " light: "+sleepClassifyEventEntities.get(i).getLight()+
+                            " motion: "+sleepClassifyEventEntities.get(i).getMotion()+
+                            " timestamp: "+ sleepClassifyEventEntities.get(i).getTimestampSeconds()+"\n";
                 }
-//                sleepClassifyOutput = String.join(" "+ sleepClassifyEventEntities);
             }
             updateOutput();
         });

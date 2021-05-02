@@ -37,10 +37,10 @@ public class SleepReceiver extends BroadcastReceiver {
             ArrayList<SleepClassifyEventEntity> clist = new ArrayList<>();
             for(int i = 0 ; i < sleepClassifyEvents.size() ; i++){
                 SleepClassifyEventEntity entity = new SleepClassifyEventEntity();
-                entity.confidence = sleepClassifyEvents.get(i).getConfidence();
-                entity.light = sleepClassifyEvents.get(i).getLight();
-                entity.motion = sleepClassifyEvents.get(i).getMotion();
-                entity.timestampSeconds = (int)sleepClassifyEvents.get(i).getTimestampMillis();
+                entity.setConfidence(sleepClassifyEvents.get(i).getConfidence());
+                entity.setLight(sleepClassifyEvents.get(i).getLight());
+                entity.setMotion(sleepClassifyEvents.get(i).getMotion());
+                entity.setTimestampSeconds((int)sleepClassifyEvents.get(i).getTimestampMillis());
                 clist.add(entity);
             }
             viewModel.addSleepClassify(clist); //broadcast에서 viewmodel 접근해도 될까..
@@ -52,9 +52,9 @@ public class SleepReceiver extends BroadcastReceiver {
             ArrayList<SleepSegmentEventEntity> slist = new ArrayList<>();
             for(int i = 0 ; i < sleepSegmentEvents.size() ; i++){
                 SleepSegmentEventEntity entity = new SleepSegmentEventEntity();
-                entity.startTimeMillis = sleepSegmentEvents.get(i).getStartTimeMillis();
-                entity.endTimeMillis = sleepSegmentEvents.get(i).getEndTimeMillis();
-                entity.status = sleepSegmentEvents.get(i).getStatus();
+                entity.setStartTimeMillis(sleepSegmentEvents.get(i).getStartTimeMillis());
+                entity.setEndTimeMillis(sleepSegmentEvents.get(i).getEndTimeMillis());
+                entity.setStatus(sleepSegmentEvents.get(i).getStatus());
                 slist.add(entity);
             }
             viewModel.addSleepSegment(slist);
